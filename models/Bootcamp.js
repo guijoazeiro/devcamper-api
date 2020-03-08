@@ -38,10 +38,10 @@ const BootcampSchema = new mongoose.Schema({
         type: {
             type: String,
             enum: ['Point']
-            
+
         },
         coordinates: {
-            type: [Number],            
+            type: [Number],
             index: '2dsphere'
         },
         formattedAddress: String,
@@ -92,6 +92,11 @@ const BootcampSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    user: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: true
     }
 
 }, {
@@ -106,7 +111,7 @@ BootcampSchema.pre('save', function () {
 })
 
 //Geocode & create location fields
-BootcampSchema.pre('save', async function(next){
+BootcampSchema.pre('save', async function (next) {
     const loc = await geocoder.geocode(this.address)
     this.location = {
         type: 'Point',
@@ -117,15 +122,15 @@ BootcampSchema.pre('save', async function(next){
         state: loc[0].stateCode,
         zipcode: loc[0].zipcode,
         country: loc[0].countryCode
-        
+
     }
     this.address = undefined
     next()
 })
 //Cascade delete courses when a bootcamp is deleted
-BootcampSchema.pre('remove', async function(next){
+BootcampSchema.pre('remove', async function (next) {
     console.log(`Courses being removed from bootcamp ${this._id}`)
-    await this.model('Course').deleteMany({ bootcamp: this._id})
+    await this.model('Course').deleteMany({ bootcamp: this._id })
     next()
 })
 
