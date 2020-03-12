@@ -2,7 +2,8 @@ const express = require('express')
 const router = express.Router({ mergeParams: true })
 const {
     getReviews,
-    getReview
+    getReview,
+    addReview
 } = require('../controllers/reviews')
 
 const Review = require('../models/Review')
@@ -16,7 +17,8 @@ router.
         path: 'bootcamp',
         select: 'name description'
     }), getReviews)
+    .post(protect, authorize('user', 'admin'), addReview)
 
-router.route('/:id').get(getReview)    
-    
+router.route('/:id').get(getReview)
+
 module.exports = router
