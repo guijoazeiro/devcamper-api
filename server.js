@@ -5,6 +5,8 @@ const morgan = require('morgan')
 const fileUpload = require('express-fileupload')
 const cookieParser = require('cookie-parser')
 const mongoSanitize = require('express-mongo-sanitize')
+const helmet = require('helmet')
+const xss = require('xss-clean')
 const errorHandling = require('./middleware/error')
 const connectDB = require('./config/db')
 
@@ -33,6 +35,10 @@ if (process.env.NODE_ENV === 'development') {
 app.use(fileUpload())
 
 app.use(mongoSanitize())
+
+app.use(helmet())
+
+app.use(xss())
 
 app.use(express.static(path.join(__dirname, 'public')))
 
